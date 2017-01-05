@@ -8,7 +8,7 @@ $query = 'select COD_SEG,SENHA from VW_LOGIN where MAIL = \''.$_REQUEST['email']
 
 $resultset =  $conexao->buscar($query);
 
-$senha = $conexao->obterLinha( $resultset );
+$senha = $conexao->arrayx( $resultset );
 
 if($senha){
 	if(!$senha['SENHA']){
