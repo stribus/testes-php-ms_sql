@@ -27,11 +27,11 @@ class MsSQLConnection {
 	public function __destruct() {
 		$this->fechaQuery();
 		if ($this->MSconn)
-			$this->fechar_conexao();
+			$this->desconecta();
 	}
 
 	function verifica() {
-		if (!$this->$MSconn) {
+		if (!$this->MSconn) {
 			return FALSE;
 		} else {
 			return TRUE;
@@ -45,12 +45,16 @@ class MsSQLConnection {
 			die;
 		}
 	}
+	
+	function sel_banco($banco) {
+		mssql_select_db($banco,$MSconn);				
+	}
 
 	function buscar($sql, $params = array(), $options = array("Scrollable" => "buffered")) {
 		if (!$this->MSconn) {
 			$this->conecta_MSSQL();
 		}
-		if (empty($q)) {
+		if (empty($sql)) {
 			die('e\' necessario uma "query".');
 		}
 		$this->fechaQuery();
@@ -60,7 +64,7 @@ class MsSQLConnection {
 
 	function faz($q = "") {
 		if (!$this->verifica()) {
-			$this->erro('e\' necessario conectar ao mysql antes.');
+			$this->erro('e\' necessario conectar ao MSSQL antes.');
 		}
 		if (empty($q)) {
 			die('e\' necessario uma "query".');
@@ -75,12 +79,14 @@ class MsSQLConnection {
 		}
 	}
 
-	function executar($sql) {
+	function executar($sql,$params = array(),$options = array("Scrollable" => "buffered")) {
 		if (!$this->MSconn) {
 			$this->conecta_MSSQL();
 		}
 		$this->fechaQuery();
-		sqlsrv_query($this->MSconn, $sql);
+		$this->query=sqlsrv_prepare($this->MSconn, $sql, $params, $options);
+		sqlsrv_execute( $this->query );
+		
 	}
 
 	function arrayx($a = null, $tipo = 'assoc') {
@@ -100,7 +106,12 @@ class MsSQLConnection {
 		}
 		return sqlsrv_fetch_array($a, $fc);
 	}
-
+	function  proximoResultset($a = null){
+		if (empty($a))
+			$a = $this->query;
+		return sqlsrv_next_result($a);
+	}
+	
 	function objeto($a = null) {
 		if (empty($a))
 			$a = $this->query;
