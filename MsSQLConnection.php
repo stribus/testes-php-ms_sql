@@ -45,9 +45,9 @@ class MsSQLConnection {
 			die;
 		}
 	}
-	
+
 	function sel_banco($banco) {
-		mssql_select_db($banco,$MSconn);				
+		mssql_select_db($banco, $MSconn);
 	}
 
 	function buscar($sql, $params = array(), $options = array("Scrollable" => "buffered")) {
@@ -79,14 +79,13 @@ class MsSQLConnection {
 		}
 	}
 
-	function executar($sql,$params = array(),$options = array("Scrollable" => "buffered")) {
+	function executar($sql, $params = array(), $options = array("Scrollable" => "buffered")) {
 		if (!$this->MSconn) {
 			$this->conecta_MSSQL();
 		}
 		$this->fechaQuery();
-		$this->query=sqlsrv_prepare($this->MSconn, $sql, $params, $options);
-		sqlsrv_execute( $this->query );
-		
+		$this->query = sqlsrv_prepare($this->MSconn, $sql, $params, $options);
+		sqlsrv_execute($this->query);
 	}
 
 	function arrayx($a = null, $tipo = 'assoc') {
@@ -106,12 +105,13 @@ class MsSQLConnection {
 		}
 		return sqlsrv_fetch_array($a, $fc);
 	}
-	function  proximoResultset($a = null){
+
+	function proximoResultset($a = null) {
 		if (empty($a))
 			$a = $this->query;
 		return sqlsrv_next_result($a);
 	}
-	
+
 	function objeto($a = null) {
 		if (empty($a))
 			$a = $this->query;
@@ -134,7 +134,7 @@ class MsSQLConnection {
 			switch ($tipo) {
 				case "delete":
 				case "update":
-					return qlsrv_rows_affected($this->query);
+					return sqlsrv_rows_affected($this->query);
 					break;
 				case "select":
 				default:
@@ -170,6 +170,19 @@ class MsSQLConnection {
 			}
 		}
 		die($msg);
+	}
+
+	function nomeColunas($q = null) {
+		if (!$q) {
+			$q = $this->query;
+		}
+		$col = false;
+		foreach (sqlsrv_field_metadata($q) as $fieldMetadata) {
+			foreach ($fieldMetadata as $name => $value) {
+				if ($name ==='Name' ) $col[] =$value;
+			}			
+		}
+		return $col;
 	}
 
 }
