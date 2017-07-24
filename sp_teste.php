@@ -25,6 +25,16 @@ and open the template in the editor.
 				print_r("<br>");
 			}
 		}
+
+		$conexao->executar("SELECT TOP 10 *
+                            FROM [ODS_PREVISUL].[dbo].[DADOS_CORRETOR]");
+
+		//while ($conexao->proximoResultset()) {
+			while ($row = $conexao->arrayx(NULL, "both")) {
+				print_r($row);
+				print_r("<br>");
+			}
+		//}
 		?>
     </body>
 </html>
