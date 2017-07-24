@@ -14,7 +14,7 @@
 			<input type="reset" value="Limpar" name="Limpar" />
 		</form>
 		<?
-		
+		echo '<script>window.location.replace("/cache1.php");</script>';
 		
 		include_once 'mysqlConnection.php';
 		
@@ -38,7 +38,10 @@
 			}	
 			print_r($a);
 		}
-				
+			
+        
+        
+        
 		?>
 		
 		
